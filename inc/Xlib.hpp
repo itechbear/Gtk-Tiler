@@ -7,7 +7,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "inc/Gtk.hpp"
 #include "inc/Gdk.hpp"
 #include "inc/Logger.hpp"
 
@@ -37,32 +36,47 @@ class Xlib {
 
     int key_left = XKeysymToKeycode(display, XK_Left);
     int key_right = XKeysymToKeycode(display, XK_Right);
+    int key_up = XKeysymToKeycode(display, XK_Up);
+    int key_down = XKeysymToKeycode(display, XK_Down);
     int key_interrupt = XKeysymToKeycode(display, XK_C);
     unsigned int modifiers = Mod1Mask;
-    Bool ownerEvents = False;
-    int pointerMode = GrabModeAsync;
-    int keyboardMode = GrabModeAsync;
-    XEvent xEvent;
+    Bool owner_events = False;
+    int pointer_mode = GrabModeAsync;
+    int keyboard_mode = GrabModeAsync;
+    XEvent x_event;
+    Window root_window = GetRootWindow();
 
-    XGrabKey(display, key_left, modifiers, GetRootWindow(), ownerEvents, pointerMode, keyboardMode);
-    XGrabKey(display, key_right, modifiers, GetRootWindow(), ownerEvents, pointerMode, keyboardMode);
-    XGrabKey(display, key_interrupt, modifiers, GetRootWindow(), ownerEvents, pointerMode, keyboardMode);
+    XGrabKey(display, key_left, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
+    XGrabKey(display, key_right, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
+    XGrabKey(display, key_up, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
+    XGrabKey(display, key_down, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
+    XGrabKey(display, key_interrupt, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
 
-    XSelectInput(display, GetRootWindow(), KeyPressMask);
+    XSelectInput(display, root_window, KeyPressMask);
 
     bool interrupted = false;
     while (!interrupted) {
-      XNextEvent(display, &xEvent);
-      switch (xEvent.type) {
+      XNextEvent(display, &x_event);
+      switch (x_event.type) {
         case KeyPress:
           // XUngrabKey(display, key, modifiers, GetRootWindow());
-          if (xEvent.xkey.keycode == key_left) {
+          if (x_event.xkey.keycode == key_left) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Left pressed!");
             gdk.MoveToLeft();
-          } else if (xEvent.xkey.keycode == key_right) {
+            gdk.MoveToLeft();
+          } else if (x_event.xkey.keycode == key_right) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Right pressed!");
             gdk.MoveToRight();
-          } else if (xEvent.xkey.keycode == key_interrupt) {
+            gdk.MoveToRight();
+          } else if (x_event.xkey.keycode == key_up) {
+            Logger::getInstance().log(LOG_NOTICE, "Alt-Up pressed!");
+            gdk.MoveToUp();
+            gdk.MoveToUp();
+          } else if (x_event.xkey.keycode == key_down) {
+            Logger::getInstance().log(LOG_NOTICE, "Alt-Down pressed!");
+            gdk.MoveToDown();
+            gdk.MoveToDown();
+          } else if (x_event.xkey.keycode == key_interrupt) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-C pressed! Quit.");
             interrupted = true;
           }
@@ -72,9 +86,11 @@ class Xlib {
       }
     }
 
-    XUngrabKey(display, key_left, modifiers, GetRootWindow());
-    XUngrabKey(display, key_right, modifiers, GetRootWindow());
-    XUngrabKey(display, key_interrupt, modifiers, GetRootWindow());
+    XUngrabKey(display, key_left, modifiers, root_window);
+    XUngrabKey(display, key_right, modifiers, root_window);
+    XUngrabKey(display, key_up, modifiers, root_window);
+    XUngrabKey(display, key_down, modifiers, root_window);
+    XUngrabKey(display, key_interrupt, modifiers, root_window);
   }
 };
 

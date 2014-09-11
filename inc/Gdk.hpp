@@ -61,6 +61,34 @@ class Gdk {
     gdk_window_move_resize(gdkWindow, width / 2, 0, width / 2, height);
     gdk_window_geometry_changed(gdkWindow);
   }
+
+  void MoveToUp() {
+    assert(screen != NULL);
+
+    GdkWindow *gdkWindow = GetActiveWindow();
+
+    assert(gdkWindow != NULL);
+
+    gint width = gdk_screen_get_width(screen);
+    gint height = gdk_screen_get_height(screen);
+
+    gdk_window_move_resize(gdkWindow, 0, 0, width, height / 2);
+    gdk_window_geometry_changed(gdkWindow);
+  }
+
+  void MoveToDown() {
+    assert(screen != NULL);
+
+    GdkWindow *gdkWindow = GetActiveWindow();
+
+    assert(gdkWindow != NULL);
+
+    gint width = gdk_screen_get_width(screen);
+    gint height = gdk_screen_get_height(screen);
+
+    gdk_window_move_resize(gdkWindow, 0, height / 2, width, height / 2);
+    gdk_window_geometry_changed(gdkWindow);
+  }
 };
 
 #endif
