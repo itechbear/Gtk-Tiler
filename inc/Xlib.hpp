@@ -7,6 +7,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "inc/Gtk.hpp"
 #include "inc/Gdk.hpp"
 #include "inc/Logger.hpp"
 
@@ -62,7 +63,6 @@ class Xlib {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Right pressed!");
             gdk.MoveToRight();
           } else if (xEvent.xkey.keycode == key_interrupt) {
-            cout << "Alt-C pressed! Quit." << endl;
             Logger::getInstance().log(LOG_NOTICE, "Alt-C pressed! Quit.");
             interrupted = true;
           }
@@ -71,6 +71,10 @@ class Xlib {
           break;
       }
     }
+
+    XUngrabKey(display, key_left, modifiers, GetRootWindow());
+    XUngrabKey(display, key_right, modifiers, GetRootWindow());
+    XUngrabKey(display, key_interrupt, modifiers, GetRootWindow());
   }
 };
 
