@@ -39,7 +39,7 @@ class Xlib {
     int key_up = XKeysymToKeycode(display, XK_Up);
     int key_down = XKeysymToKeycode(display, XK_Down);
     int key_interrupt = XKeysymToKeycode(display, XK_C);
-    unsigned int modifiers = Mod1Mask;
+    unsigned int modifiers = ShiftMask | Mod1Mask;
     Bool owner_events = False;
     int pointer_mode = GrabModeAsync;
     int keyboard_mode = GrabModeAsync;

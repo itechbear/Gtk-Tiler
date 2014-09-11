@@ -1,14 +1,15 @@
 Introduction
 ============
 
-A program that simulates ms windows' "Win + Arrow Key" behavior on linux system.
+A program that simulates ms windows' "Win + Arrow Key" behavior on linux system. 
 
 Usage
 =====
 
- - click a window to make it focused
- - press Alt + Left Arrow, or Alt + Right Arrow
- - press Alt + C to quit this program.
+ - Start it. It has no gui nor any hints.
+ - Click a window to make it focused
+ - Press Shift + Alt + Left Arrow, or Shift + Alt + Right Arrow
+ - Press Shift + Alt + C to quit this program.
 
 Known issues
 ============
