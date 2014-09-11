@@ -7,9 +7,9 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  Lock lock;
   Process::Daemonize(NULL);
 
+  Lock lock;
   Xlib xlib;
   Gdk gdk(argc, argv);
 
