@@ -3,6 +3,11 @@ Introduction
 
 A program that simulates ms windows' "Win + Arrow Key" behavior on linux system. 
 
+Screenshots
+===========
+
+![Screenshot](/screenshots/gtk-tiler.gif?raw=true "Gtk-Tiler")
+
 Usage
 =====
 
