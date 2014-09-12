@@ -4,6 +4,7 @@
 #include <sys/file.h>
 
 #include <cassert>
+#include <iostream>
 
 class Lock {
  private:
@@ -16,6 +17,8 @@ class Lock {
 
     int lock = flock(fid, LOCK_EX | LOCK_NB);
     assert(lock == 0);
+
+    std::cout << "Started!" << std::endl;
   };
 
   ~Lock() {

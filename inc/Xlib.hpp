@@ -63,19 +63,19 @@ class Xlib {
           if (x_event.xkey.keycode == key_left) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Left pressed!");
             gdk.MoveToLeft();
-            gdk.MoveToLeft();
+            // gdk.MoveToLeft();
           } else if (x_event.xkey.keycode == key_right) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Right pressed!");
             gdk.MoveToRight();
-            gdk.MoveToRight();
+            // gdk.MoveToRight();
           } else if (x_event.xkey.keycode == key_up) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Up pressed!");
             gdk.MoveToUp();
-            gdk.MoveToUp();
+            // gdk.MoveToUp();
           } else if (x_event.xkey.keycode == key_down) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-Down pressed!");
             gdk.MoveToDown();
-            gdk.MoveToDown();
+            // gdk.MoveToDown();
           } else if (x_event.xkey.keycode == key_interrupt) {
             Logger::getInstance().log(LOG_NOTICE, "Alt-C pressed! Quit.");
             interrupted = true;

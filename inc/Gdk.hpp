@@ -8,22 +8,25 @@
 
 class Gdk {
  private:
-  GdkScreen *screen;
-
+  GdkDisplay *display;
  public:
   Gdk(int argc, char *argv[]) {
     gdk_init(&argc, &argv);
-    GdkDisplay *display = gdk_display_get_default();
-    screen = gdk_display_get_screen(display, 0);
+    display = gdk_display_get_default();
   };
 
   ~Gdk() {
+    gdk_threads_leave();
+  }
+
+  GdkScreen *GetScreen() {
+    return gdk_display_get_screen(display, 0);
   }
 
   GdkWindow *GetActiveWindow() {
-    assert(screen != NULL);
+    GdkScreen *gdkScreen = GetScreen();
 
-    return gdk_screen_get_active_window(screen);
+    return gdk_screen_get_active_window(gdkScreen);
   }
 
   void GetWindowSize(GdkWindow *gdkWindow, gint &width, gint &height) {
@@ -34,60 +37,57 @@ class Gdk {
     gdk_window_resize(gdkWindow, width, height);
   }
 
-  void MoveToLeft() {
-    assert(screen != NULL);
+  static void Flush(GdkWindow *gdkWindow) {
+    gdk_flush();
+  }
 
+  void GetAvailableWidthAndHeight(gint &width, gint &height) {
+    GdkScreen *gdkScreen = GetScreen();
+
+    width = gdk_screen_get_width(gdkScreen);
+    height = gdk_screen_get_height(gdkScreen);
+  }
+
+  void MoveToLeft() {
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
-    gint width = gdk_screen_get_width(screen);
-    gint height = gdk_screen_get_height(screen);
-
+    gint width, height;
+    GetAvailableWidthAndHeight(width, height);
+    gdk_window_unmaximize(gdkWindow);
     gdk_window_move_resize(gdkWindow, 0, 0, width / 2, height);
-    gdk_window_geometry_changed(gdkWindow);
+    Flush(gdkWindow);
   }
 
   void MoveToRight() {
-    assert(screen != NULL);
-
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
-    gint width = gdk_screen_get_width(screen);
-    gint height = gdk_screen_get_height(screen);
-
+    gint width, height;
+    GetAvailableWidthAndHeight(width, height);
+    gdk_window_unmaximize(gdkWindow);
     gdk_window_move_resize(gdkWindow, width / 2, 0, width / 2, height);
-    gdk_window_geometry_changed(gdkWindow);
+    Flush(gdkWindow);
   }
 
   void MoveToUp() {
-    assert(screen != NULL);
-
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
-    gint width = gdk_screen_get_width(screen);
-    gint height = gdk_screen_get_height(screen);
-
-    gdk_window_move_resize(gdkWindow, 0, 0, width, height / 2);
-    gdk_window_geometry_changed(gdkWindow);
+    gdk_window_maximize(gdkWindow);
+    Flush(gdkWindow);
   }
 
   void MoveToDown() {
-    assert(screen != NULL);
-
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
-    gint width = gdk_screen_get_width(screen);
-    gint height = gdk_screen_get_height(screen);
-
-    gdk_window_move_resize(gdkWindow, 0, height / 2, width, height / 2);
-    gdk_window_geometry_changed(gdkWindow);
+    gdk_window_iconify(gdkWindow);
+    Flush(gdkWindow);
   }
 };
 
