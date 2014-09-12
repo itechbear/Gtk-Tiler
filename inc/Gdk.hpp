@@ -16,7 +16,6 @@ class Gdk {
   };
 
   ~Gdk() {
-    gdk_threads_leave();
   }
 
   GdkScreen *GetScreen() {
@@ -30,7 +29,12 @@ class Gdk {
   }
 
   void GetWindowSize(GdkWindow *gdkWindow, gint &width, gint &height) {
-    gdk_window_get_size(gdkWindow, &width, &height);
+    gint x, y, depth;
+#if GDK_MAJOR_VERSION == 3
+      gdk_window_get_geometry(gdkWindow, &x, &y, &width, &height);
+#else
+      gdk_window_get_geometry(gdkWindow, &x, &y, &width, &height, &depth);
+#endif
   }
 
   void ResizeWindow(GdkWindow *gdkWindow, gint width, gint height) {

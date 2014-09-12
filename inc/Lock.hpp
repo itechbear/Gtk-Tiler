@@ -2,6 +2,7 @@
 #define _LOCK_HPP_
 
 #include <sys/file.h>
+#include <unistd.h>
 
 #include <cassert>
 #include <iostream>
