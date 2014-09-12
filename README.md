@@ -1,7 +1,7 @@
 Introduction
 ============
 
-A program that simulates ms windows' "Win + Arrow Key" behavior on linux system. 
+A program that simulates ms windows' "Win + Arrow Key" behavior on linux system.
 
 Screenshots
 ===========
@@ -25,7 +25,8 @@ Compile
 
  - Install gtk2-devel and cmake.
  - Clone the source code into Gtk-Tiler directory
- - $ cd Gtk-Tiler && mkdir build && cd build && cmake ..
+ - $ cd Gtk-Tiler && mkdir build && cd build && cmake .. && make (With GTK3)
+ - $ cd Gtk-Tiler && mkdir build && cd build && cmake .. -DGTK3=OFF && make (With GTK2)
  - Run the binary file located at Gtk-Tiler/build/Gtk-Tiler
 
 Known issues
