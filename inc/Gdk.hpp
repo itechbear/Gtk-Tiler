@@ -3,8 +3,11 @@
 
 #include <cassert>
 #include <iostream>
+#include <vector>
 
 #include <gdk/gdk.h>
+
+using std::vector;
 
 class Gdk {
  private:
@@ -28,6 +31,42 @@ class Gdk {
     return gdk_screen_get_active_window(gdkScreen);
   }
 
+  gint GetMonitorsCount() {
+    GdkScreen *gdkScreen = GetScreen();
+
+    return gdk_screen_get_n_monitors(gdkScreen);
+  }
+
+  void GetMonitorsXYCordinate(vector<gint> &x, vector<gint> &y) {
+    GdkScreen *gdkScreen = GetScreen();
+    gint count = GetMonitorsCount();
+
+    for (int i = 0; i < count; i++) {
+      GdkRectangle gdkRectangle;
+      gdk_screen_get_monitor_geometry(gdkScreen, i, &gdkRectangle);
+      x.push_back(gdkRectangle.x);
+      y.push_back(gdkRectangle.y);
+    }
+  }
+
+  gint GetMonitorIndex(GdkWindow *gdkWindow) {
+    GdkScreen *gdkScreen = GetScreen();
+
+    return gdk_screen_get_monitor_at_window(gdkScreen, gdkWindow);
+  }
+
+  gint GetMonitorWidthHeightAt(int i, gint &x, gint &y, gint &width, gint &height) {
+    GdkScreen *gdkScreen = GetScreen();
+
+    GdkRectangle gdkRectangle;
+    gdk_screen_get_monitor_geometry(gdkScreen, i, &gdkRectangle);
+
+    x = gdkRectangle.x;
+    y = gdkRectangle.y;
+    width = gdkRectangle.width;
+    height = gdkRectangle.height;
+  }
+
   void GetWindowSize(GdkWindow *gdkWindow, gint &width, gint &height) {
     gint x, y, depth;
 #if GDK_MAJOR_VERSION == 3
@@ -45,11 +84,11 @@ class Gdk {
     gdk_flush();
   }
 
-  void GetAvailableWidthAndHeight(gint &width, gint &height) {
+  void GetAvailableWidthAndHeight(GdkWindow *gdkWindow, gint &x, gint &y, gint &width, gint &height) {
     GdkScreen *gdkScreen = GetScreen();
+    int index = GetMonitorIndex(gdkWindow);
 
-    width = gdk_screen_get_width(gdkScreen);
-    height = gdk_screen_get_height(gdkScreen);
+    GetMonitorWidthHeightAt(index, x, y, width, height);
   }
 
   void MoveToLeft() {
@@ -57,10 +96,10 @@ class Gdk {
 
     assert(gdkWindow != NULL);
 
-    gint width, height;
-    GetAvailableWidthAndHeight(width, height);
+    gint x, y, width, height;
+    GetAvailableWidthAndHeight(gdkWindow, x, y, width, height);
     gdk_window_unmaximize(gdkWindow);
-    gdk_window_move_resize(gdkWindow, 0, 0, width / 2, height);
+    gdk_window_move_resize(gdkWindow, x, y, width / 2, height);
     Flush(gdkWindow);
   }
 
@@ -69,10 +108,10 @@ class Gdk {
 
     assert(gdkWindow != NULL);
 
-    gint width, height;
-    GetAvailableWidthAndHeight(width, height);
+    gint x, y, width, height;
+    GetAvailableWidthAndHeight(gdkWindow, x, y, width, height);
     gdk_window_unmaximize(gdkWindow);
-    gdk_window_move_resize(gdkWindow, width / 2, 0, width / 2, height);
+    gdk_window_move_resize(gdkWindow, x + width / 2, y, width / 2, height);
     Flush(gdkWindow);
   }
 
