@@ -12,6 +12,17 @@
 
 using namespace std;
 
+const unsigned int kModifiersMasks[] = {
+  0,                                // No additional modifier.
+  Mod2Mask,                         // Num lock
+  LockMask,                         // Caps lock
+  Mod5Mask,                         // Scroll lock
+  Mod2Mask | LockMask,
+  Mod2Mask | Mod5Mask,
+  LockMask | Mod5Mask,
+  Mod2Mask | LockMask | Mod5Mask
+};
+
 class Xlib {
  private:
   Display *display;
@@ -39,18 +50,20 @@ class Xlib {
     int key_up = XKeysymToKeycode(display, XK_Up);
     int key_down = XKeysymToKeycode(display, XK_Down);
     int key_interrupt = XKeysymToKeycode(display, XK_C);
-    unsigned int modifiers = ShiftMask | Mod1Mask;
+    unsigned int modifiers = Mod4Mask;
     Bool owner_events = False;
     int pointer_mode = GrabModeAsync;
     int keyboard_mode = GrabModeAsync;
     XEvent x_event;
     Window root_window = GetRootWindow();
 
-    XGrabKey(display, key_left, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
-    XGrabKey(display, key_right, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
-    XGrabKey(display, key_up, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
-    XGrabKey(display, key_down, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
-    XGrabKey(display, key_interrupt, modifiers, root_window, owner_events, pointer_mode, keyboard_mode);
+    for (int i = 0; i < sizeof(kModifiersMasks) / sizeof(*kModifiersMasks); i++) {
+      XGrabKey(display, key_left, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display, key_right, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display, key_up, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display, key_down, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display, key_interrupt, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+    }
 
     XSelectInput(display, root_window, KeyPressMask);
 
@@ -61,23 +74,19 @@ class Xlib {
         case KeyPress:
           // XUngrabKey(display, key, modifiers, GetRootWindow());
           if (x_event.xkey.keycode == key_left) {
-            Logger::getInstance().log(LOG_NOTICE, "Alt-Left pressed!");
+            Logger::getInstance().log(LOG_NOTICE, "Meta-Left pressed!");
             gdk.MoveToLeft();
-            // gdk.MoveToLeft();
           } else if (x_event.xkey.keycode == key_right) {
-            Logger::getInstance().log(LOG_NOTICE, "Alt-Right pressed!");
+            Logger::getInstance().log(LOG_NOTICE, "Meta-Right pressed!");
             gdk.MoveToRight();
-            // gdk.MoveToRight();
           } else if (x_event.xkey.keycode == key_up) {
-            Logger::getInstance().log(LOG_NOTICE, "Alt-Up pressed!");
+            Logger::getInstance().log(LOG_NOTICE, "Meta-Up pressed!");
             gdk.MoveToUp();
-            // gdk.MoveToUp();
           } else if (x_event.xkey.keycode == key_down) {
-            Logger::getInstance().log(LOG_NOTICE, "Alt-Down pressed!");
+            Logger::getInstance().log(LOG_NOTICE, "Meta-Down pressed!");
             gdk.MoveToDown();
-            // gdk.MoveToDown();
           } else if (x_event.xkey.keycode == key_interrupt) {
-            Logger::getInstance().log(LOG_NOTICE, "Alt-C pressed! Quit.");
+            Logger::getInstance().log(LOG_NOTICE, "Meta-C pressed! Quit.");
             interrupted = true;
           }
           break;
@@ -86,11 +95,13 @@ class Xlib {
       }
     }
 
-    XUngrabKey(display, key_left, modifiers, root_window);
-    XUngrabKey(display, key_right, modifiers, root_window);
-    XUngrabKey(display, key_up, modifiers, root_window);
-    XUngrabKey(display, key_down, modifiers, root_window);
-    XUngrabKey(display, key_interrupt, modifiers, root_window);
+    for (int i = 0; i < sizeof(kModifiersMasks) / sizeof(*kModifiersMasks); i++) {
+      XUngrabKey(display, key_left, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display, key_right, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display, key_up, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display, key_down, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display, key_interrupt, modifiers | kModifiersMasks[i], root_window);
+    }
   }
 };
 

@@ -13,12 +13,12 @@ Usage
 
 Start this program. It has no gui nor any hints. Click a window to make it focused. Now you can:
 
- - Press Shift + Alt + Left Arrow to place it at the left of the screen
- - or Press Shift + Alt + Right Arrow to place it at the right of the screen
- - or Press Shift + Alt + Up Arrow to maximize it
- - or Press Shift + Alt + Down Arrow to minimize it
+ - Press Meta(Aka, Win/Super) + Left Arrow to place it at the left of the screen
+ - or Press Meta(Aka, Win/Super) + Right Arrow to place it at the right of the screen
+ - or Press Meta(Aka, Win/Super) + Up Arrow to maximize it
+ - or Press Meta(Aka, Win/Super) + Down Arrow to minimize it
 
-You can press Shift + Alt + C to quit this program. Still, it quit quietly without any word.
+You can press Meta(Aka, Win/Super) + C to quit this program. Still, it quit quietly without any word.
 
 Compile
 =======
@@ -32,5 +32,4 @@ Compile
 Known issues
 ============
 
- - borders of window may overlap
  - doesn't support multi-screens
