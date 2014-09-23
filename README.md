@@ -23,7 +23,7 @@ You can press Meta(Aka, Win/Super) + C to quit this program. Still, it quit quie
 Compile
 =======
 
- - Install gtk2-devel and cmake.
+ - Install gtk2-devel/gtk3-devel and cmake.
  - Clone the source code into Gtk-Tiler directory
  - $ cd Gtk-Tiler && mkdir build && cd build && cmake .. && make (With GTK3)
  - $ cd Gtk-Tiler && mkdir build && cd build && cmake .. -DGTK3=OFF && make (With GTK2)
@@ -33,3 +33,4 @@ Known issues
 ============
 
  - doesn't support multi-screens
+ - gdk_screen_get_monitor_at_window() sometimes returns a wrong value for some application, eg. chromium-browser.
