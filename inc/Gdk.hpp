@@ -15,6 +15,7 @@ class Gdk {
  public:
   Gdk(int argc, char *argv[]) {
     gdk_init(&argc, &argv);
+    gdk_threads_init();
     display = gdk_display_get_default();
   };
 
@@ -92,6 +93,8 @@ class Gdk {
   }
 
   void MoveToLeft() {
+    gdk_threads_enter();
+
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
@@ -101,9 +104,13 @@ class Gdk {
     gdk_window_unmaximize(gdkWindow);
     gdk_window_move_resize(gdkWindow, x, y, width / 2, height);
     Flush(gdkWindow);
+
+    gdk_threads_leave();
   }
 
   void MoveToRight() {
+    gdk_threads_enter();
+
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
@@ -113,24 +120,34 @@ class Gdk {
     gdk_window_unmaximize(gdkWindow);
     gdk_window_move_resize(gdkWindow, x + width / 2, y, width / 2, height);
     Flush(gdkWindow);
+
+    gdk_threads_leave();
   }
 
-  void MoveToUp() {
+  void Maximize() {
+    gdk_threads_enter();
+
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
     gdk_window_maximize(gdkWindow);
     Flush(gdkWindow);
+
+    gdk_threads_leave();
   }
 
-  void MoveToDown() {
+  void Minimize() {
+    gdk_threads_enter();
+
     GdkWindow *gdkWindow = GetActiveWindow();
 
     assert(gdkWindow != NULL);
 
     gdk_window_iconify(gdkWindow);
     Flush(gdkWindow);
+
+    gdk_threads_leave();
   }
 };
 

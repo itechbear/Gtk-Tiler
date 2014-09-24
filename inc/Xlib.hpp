@@ -6,6 +6,7 @@
 #include <iostream>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <gtk/gtk.h>
 
 #include "inc/Gdk.hpp"
 #include "inc/Logger.hpp"
@@ -25,31 +26,37 @@ const unsigned int kModifiersMasks[] = {
 
 class Xlib {
  private:
-  Display *display;
+  Display *display_;
+  Gdk *gdk_;
 
  public:
-  Xlib() {
-    display = XOpenDisplay(":0.0");
+  Xlib(Gdk &gdk) {
+    display_ = XOpenDisplay(":0.0");
+    gdk_ = &gdk;
   };
 
   ~Xlib() {
-    XCloseDisplay(display);
+    XCloseDisplay(display_);
+  }
+
+  Display *GetDisplay() {
+    return display_;
   }
 
   Window GetRootWindow() {
-    assert(display != NULL);
+    assert(display_ != NULL);
 
-    return XDefaultRootWindow(display);
+    return XDefaultRootWindow(display_);
   }
 
-  void RegisterHotkey(Gdk &gdk) {
-    assert(display != NULL);
+  void RegisterHotkey() {
+    assert(display_ != NULL);
 
-    int key_left = XKeysymToKeycode(display, XK_Left);
-    int key_right = XKeysymToKeycode(display, XK_Right);
-    int key_up = XKeysymToKeycode(display, XK_Up);
-    int key_down = XKeysymToKeycode(display, XK_Down);
-    int key_interrupt = XKeysymToKeycode(display, XK_C);
+    int key_left = XKeysymToKeycode(display_, XK_Left);
+    int key_right = XKeysymToKeycode(display_, XK_Right);
+    int key_up = XKeysymToKeycode(display_, XK_Up);
+    int key_down = XKeysymToKeycode(display_, XK_Down);
+    int key_interrupt = XKeysymToKeycode(display_, XK_C);
     unsigned int modifiers = Mod4Mask;
     Bool owner_events = False;
     int pointer_mode = GrabModeAsync;
@@ -58,33 +65,33 @@ class Xlib {
     Window root_window = GetRootWindow();
 
     for (int i = 0; i < sizeof(kModifiersMasks) / sizeof(*kModifiersMasks); i++) {
-      XGrabKey(display, key_left, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
-      XGrabKey(display, key_right, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
-      XGrabKey(display, key_up, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
-      XGrabKey(display, key_down, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
-      XGrabKey(display, key_interrupt, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display_, key_left, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display_, key_right, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display_, key_up, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display_, key_down, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
+      XGrabKey(display_, key_interrupt, modifiers | kModifiersMasks[i], root_window, owner_events, pointer_mode, keyboard_mode);
     }
 
-    XSelectInput(display, root_window, KeyPressMask);
+    XSelectInput(display_, root_window, KeyPressMask);
 
     bool interrupted = false;
     while (!interrupted) {
-      XNextEvent(display, &x_event);
+      XNextEvent(display_, &x_event);
       switch (x_event.type) {
         case KeyPress:
           // XUngrabKey(display, key, modifiers, GetRootWindow());
           if (x_event.xkey.keycode == key_left) {
             Logger::getInstance().log(LOG_NOTICE, "Meta-Left pressed!");
-            gdk.MoveToLeft();
+            gdk_->MoveToLeft();
           } else if (x_event.xkey.keycode == key_right) {
             Logger::getInstance().log(LOG_NOTICE, "Meta-Right pressed!");
-            gdk.MoveToRight();
+            gdk_->MoveToRight();
           } else if (x_event.xkey.keycode == key_up) {
             Logger::getInstance().log(LOG_NOTICE, "Meta-Up pressed!");
-            gdk.MoveToUp();
+            gdk_->Maximize();
           } else if (x_event.xkey.keycode == key_down) {
             Logger::getInstance().log(LOG_NOTICE, "Meta-Down pressed!");
-            gdk.MoveToDown();
+            gdk_->Minimize();
           } else if (x_event.xkey.keycode == key_interrupt) {
             Logger::getInstance().log(LOG_NOTICE, "Meta-C pressed! Quit.");
             interrupted = true;
@@ -96,12 +103,14 @@ class Xlib {
     }
 
     for (int i = 0; i < sizeof(kModifiersMasks) / sizeof(*kModifiersMasks); i++) {
-      XUngrabKey(display, key_left, modifiers | kModifiersMasks[i], root_window);
-      XUngrabKey(display, key_right, modifiers | kModifiersMasks[i], root_window);
-      XUngrabKey(display, key_up, modifiers | kModifiersMasks[i], root_window);
-      XUngrabKey(display, key_down, modifiers | kModifiersMasks[i], root_window);
-      XUngrabKey(display, key_interrupt, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display_, key_left, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display_, key_right, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display_, key_up, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display_, key_down, modifiers | kModifiersMasks[i], root_window);
+      XUngrabKey(display_, key_interrupt, modifiers | kModifiersMasks[i], root_window);
     }
+
+    gtk_main_quit();
   }
 };
 
