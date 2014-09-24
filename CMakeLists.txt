@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.4)
 
-project(Gtk-Tiler)
+project(gtk-tiler)
 
 option(GTK3 "Build with GTK3 instead of GTK2" OFF)
 

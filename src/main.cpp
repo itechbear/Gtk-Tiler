@@ -9,19 +9,16 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  // Process::Daemonize(NULL);
+  Process::Daemonize(NULL);
 
   Lock lock;
-  Gdk gdk(argc, argv);
-
-  Xlib xlib(gdk);
-  Gtk gtk(argc, argv, xlib);
+  Xlib xlib(argc, argv);
+  Gtk gtk(argc, argv);
   Thread thread(xlib);
 
   assert(thread.Start() == 0);
 
-  gtk.SetTrayIcon();
-  gtk_main();
+  gtk.Run();
 
   return 0;
 }

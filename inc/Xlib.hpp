@@ -30,13 +30,14 @@ class Xlib {
   Gdk *gdk_;
 
  public:
-  Xlib(Gdk &gdk) {
+  Xlib(int argc, char *argv[]) {
     display_ = XOpenDisplay(":0.0");
-    gdk_ = &gdk;
+    gdk_ = new Gdk(argc, argv);
   };
 
   ~Xlib() {
     XCloseDisplay(display_);
+    delete gdk_;
   }
 
   Display *GetDisplay() {
@@ -111,6 +112,18 @@ class Xlib {
     }
 
     gtk_main_quit();
+  }
+
+  static void SendQuitKeyEvent() {
+    Display *display = XOpenDisplay(":0.0");
+    Window window = XDefaultRootWindow(display);
+
+    XEvent x_event;
+    x_event.type = KeyPress;
+    x_event.xkey.keycode = XKeysymToKeycode(display, XK_C);
+    x_event.xkey.state = Mod4Mask;
+
+    XSendEvent(display, window, true, KeyPressMask, &x_event);
   }
 };
 
