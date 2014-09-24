@@ -11,14 +11,14 @@ Screenshots
 Usage
 =====
 
-Start this program. It has no gui nor any hints. Click a window to make it focused. Now you can:
+Start this program. It minimizes itself to system tray. Click a window to make it focused. Now you can:
 
  - Press Meta(Aka, Win/Super) + Left Arrow to place it at the left of the screen
  - or Press Meta(Aka, Win/Super) + Right Arrow to place it at the right of the screen
  - or Press Meta(Aka, Win/Super) + Up Arrow to maximize it
  - or Press Meta(Aka, Win/Super) + Down Arrow to minimize it
 
-You can press Meta(Aka, Win/Super) + C to quit this program. Still, it quit quietly without any word.
+You can press Meta(Aka, Win/Super) + C to quit this program, Or through the menu of the tray icon.
 
 Compile
 =======
