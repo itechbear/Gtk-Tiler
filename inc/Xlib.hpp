@@ -10,6 +10,7 @@
 
 #include "inc/Gdk.hpp"
 #include "inc/Logger.hpp"
+#include "inc/Config.hpp"
 
 using namespace std;
 
@@ -57,8 +58,8 @@ class Xlib {
     int key_right = XKeysymToKeycode(display_, XK_Right);
     int key_up = XKeysymToKeycode(display_, XK_Up);
     int key_down = XKeysymToKeycode(display_, XK_Down);
-    int key_interrupt = XKeysymToKeycode(display_, XK_C);
-    unsigned int modifiers = Mod4Mask;
+    int key_interrupt = GetKeyQuit();
+    unsigned int modifiers = GetKeyModifiers();
     Bool owner_events = False;
     int pointer_mode = GrabModeAsync;
     int keyboard_mode = GrabModeAsync;
@@ -119,11 +120,24 @@ class Xlib {
     Window window = XDefaultRootWindow(display);
 
     XEvent x_event;
-    x_event.type = KeyPress;
-    x_event.xkey.keycode = XKeysymToKeycode(display, XK_C);
-    x_event.xkey.state = Mod4Mask;
+    x_event.xkey.type = KeyPress;
+    x_event.xkey.keycode = GetKeyQuit();
+    x_event.xkey.state = GetKeyModifiers();
 
-    XSendEvent(display, window, true, KeyPressMask, &x_event);
+    XSendEvent(display, window, True, KeyPressMask, &x_event);
+    XFlush(display);
+    XCloseDisplay(display);
+  }
+
+  static int GetKeyQuit() {
+    Display *display = XOpenDisplay(":0.0");
+    int key = XKeysymToKeycode(display, XK_C);
+    XCloseDisplay(display);
+    return key;
+  }
+
+  static int GetKeyModifiers() {
+    return Mod4Mask;
   }
 };
 

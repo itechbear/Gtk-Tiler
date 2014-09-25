@@ -5,10 +5,13 @@
 #include "inc/Xlib.hpp"
 #include "inc/Gtk.hpp"
 #include "inc/Thread.hpp"
+#include "inc/Usage.hpp"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
+  Usage::usage(argc, argv);
+
   Process::Daemonize(NULL);
 
   Lock lock;
